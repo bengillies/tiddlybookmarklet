@@ -24,7 +24,7 @@
 			}
 		}
 	};
-	
+
 	function setFocus($el) {
 		// use a setTimeout due to weirdness in chrome
 		window.setTimeout(function() {
@@ -36,7 +36,7 @@
 			$el.val(val);
 		}, 0);
 	}
-	
+
 	var tabs = {
 		post: {
 			populate: function(data) {
@@ -52,7 +52,7 @@
 					description = $('#textInputPost').val(),
 					privOrPub = $('#privateInputPost:checked').length ? 'private' : 'public';
 					tags = figureTags($('#tagsInputPost').val());
-		
+
 				var tiddler = new tiddlyweb.Tiddler(title);
 				tiddler.fields = {
 					url: url
@@ -60,7 +60,7 @@
 				tiddler.tags = tags;
 				tiddler.privacy = privOrPub;
 				tiddler.text = description;
-				
+
 				return tiddler;
 			}
 		},
@@ -77,7 +77,7 @@
 					description = $('#textInputLink').val(),
 					privOrPub = $('#privateInputLink:checked').length ? 'private' : 'public';
 					tags = figureTags($('#tagsInputLink').val());
-		
+
 				var tiddler = new tiddlyweb.Tiddler(title);
 				tiddler.fields = {
 					url: url
@@ -85,7 +85,7 @@
 				tiddler.tags = tags;
 				tiddler.privacy = privOrPub;
 				tiddler.text = ['!URL', url, '', '!Description', description].join('\n');
-				
+
 				return tiddler;
 			}
 		},
@@ -105,7 +105,7 @@
 					notes = $('#textInputQuote').val(),
 					privOrPub = $('#privateInputQuote:checked').length ? 'private' : 'public';
 					tags = figureTags($('#tagsInputQuote').val());
-		
+
 				var tiddler = new tiddlyweb.Tiddler(title);
 				tiddler.fields = {
 					url: url
@@ -113,7 +113,7 @@
 				tiddler.tags = tags;
 				tiddler.privacy = privOrPub;
 				tiddler.text = ['<<<', quote, '<<<', notes].join('\n');
-				
+
 				return tiddler;
 			}
 		},
@@ -134,7 +134,7 @@
 					notes = $('#textInputImage').val(),
 					privOrPub = $('#privateInputImage:checked').length ? 'private' : 'public';
 					tags = figureTags($('#tagsInputImage').val());
-					
+
 				var tiddler = new tiddlyweb.Tiddler(title);
 				tiddler.fields = {
 					url: url
@@ -142,12 +142,12 @@
 				tiddler.tags = tags;
 				tiddler.privacy = privOrPub;
 				tiddler.text = ['[img[' + image + ']]', notes].join('\n');
-				
+
 				return tiddler;
 			}
 		}
 	};
-	
+
 	function setImages(selector, images) {
 		$.each(images, function(i, img) {
 			$('<img/>').attr('src', img)
@@ -161,10 +161,10 @@
 						.addClass('current');
 				}).appendTo(selector);
 		});
-		
+
 		$('img:first', selector).addClass('current');
 	}
-	
+
 	function pickDefaultTab(data) {
 		if (!data.text) {
 			return 'link';
@@ -272,10 +272,10 @@ $(function() {
 				}
 			});
 		}
-		
+
 		// figure out which tab we should start off on
 		var tab = pickDefaultTab(data);
-		
+
 		// populate the tab with data when the user switches to it
 		$('.tabs').delegate('li', 'click', function() {
 			var tabName = $(this).data('tab-name');
@@ -283,7 +283,7 @@ $(function() {
 				tabs[tabName].populate(data);
 			}
 		});
-		
+
 		// initialise the app by switching to the correct tab.
 		$('.tabs li').each(function(i, el) {
 			var $el = $(el);
@@ -292,7 +292,7 @@ $(function() {
 				return false;
 			}
 		});
-		
+
 		// now display the container again
 		$('#container').show();
 	});
