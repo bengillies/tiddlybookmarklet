@@ -21,7 +21,7 @@
 		},
 		done: function(target) {
 			var self = this;
-			$.map(this.queue, function(obj, i) {
+			this.queue = $.map(this.queue, function(obj, i) {
 				if (obj.target === target) {
 					obj.fn(self[target]);
 					return null;
@@ -45,8 +45,10 @@
 		for (key in obj) {
 			if (obj.hasOwnProperty(key)) {
 				if ((!~['string', 'function'].indexOf(typeof obj[key]))
-						&& (target.hasOwnProperty[key])) {
-					target[key] = _extend(target[key] || {}, obj[key]);
+						&& (!$.isArray(obj[key]))
+						&& (target.hasOwnProperty(key))) {
+					target[key] = _extend(_extend({}, target[key] || {}),
+						obj[key]);
 				} else {
 					target[key] = obj[key];
 				}
@@ -141,22 +143,20 @@
 	};
 
 	Tab.prototype.figureTags = function(tagString) {
-		return function() {
-			var brackets = /^\s*\[\[([^\]\]]+)\]\](\s*.*)/,
-				whitespace = /^\s*([^\s]+)(\s*.*)/,
-				match,
-				rest = tagString,
-				tags = [];
+		var brackets = /^\s*\[\[([^\]\]]+)\]\](\s*.*)/,
+			whitespace = /^\s*([^\s]+)(\s*.*)/,
+			match,
+			rest = tagString,
+			tags = [];
 
+		match = brackets.exec(rest) || whitespace.exec(rest);
+		while (match) {
+			tags.push(match[1]);
+			rest = match[2];
 			match = brackets.exec(rest) || whitespace.exec(rest);
-			while (match) {
-				tags.push(match[1]);
-				rest = match[2];
-				match = brackets.exec(rest) || whitespace.exec(rest);
-			}
+		}
 
-			return tags;
-		};
+		return tags;
 	};
 
 
