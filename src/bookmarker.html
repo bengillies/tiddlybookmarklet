@@ -14,7 +14,7 @@
 
 		#container {
 			/* prevent a fouc if no images present */
-			display: none;
+/*			display: none;*/
 		}
 
 		.modal-header {
@@ -74,10 +74,6 @@
 			margin-bottom: 67px;
 		}
 
-		fieldset > label {
-			margin-top: 18px;
-		}
-
 		.tabs {
 			padding-left: 5px;
 			margin: 0;
@@ -108,6 +104,7 @@
 			-webkit-border-radius: 3px;
 			-moz-border-radius: 3px;
 			border-radius: 3px;
+			margin-left: 0;
 		}
 
 		.imagePicker img {
@@ -117,6 +114,13 @@
 
 		.imagePicker .current {
 			border: 2px dotted #555;
+		}
+
+		.private {
+			font-weight: bold;
+			width: auto;
+			margin-top: 3px;
+			margin-left: 6px;
 		}
 
 		@media all and (max-width: 550px) {
@@ -145,120 +149,72 @@
 
 
 			<fieldset id="postForm" class="form-stacked modal-body tab-pane">
-				<div class="clearfix">
-					<label for="titleInputPost">Title</label>
-					<div class="input">
-						<input type="text" id="titleInputPost" class="span8" name="title">
-					</div>
-				</div>
-					<input type="hidden" id="urlInputPost" class="span8" name="url">
-				<div class="clearfix">
-					<label for="textInputPost">Post</label>
-					<div class="input">
-						<textarea id="textInputPost" class="span8" name="text" rows="8"></textarea>
-					</div>
-				</div>
-				<div class="clearfix">
-					<label for="tagsInputPost">Tags</label>
-					<div class="input">
-						<input type="text" id="tagsInputPost" class="span8" name="tags" value="post">
-					</div>
-				</div>
-				<label for="privateInputPost">
-					<input type="checkbox" name="private" id="privateInputPost" val="private">
-					keep private
+				<label class='clearfix'>Title
+					<input type="text" class="span8" name="title">
+				</label>
+				<input type="hidden" class="span8" name="url">
+				<label class='clearfix'>Post
+					<textarea class="span8" name="text" rows="8"></textarea>
+				</label>
+				<label class='clearfix'>Tags
+					<input type="text" class="span8" name="tags" value="post">
 				</label>
 			</fieldset>
 
 
 			<fieldset id="linkForm" class="form-stacked modal-body tab-pane active">
-				<div class="clearfix">
-					<label for="titleInputLink">Title</label>
-					<div class="input">
-						<input type="text" id="titleInputLink" class="span8" name="title">
-					</div>
-				</div>
-				<div class="clearfix">
-					<label for="urlInputLink">URL</label>
-					<div class="input">
-						<input type="text" id="urlInputLink" class="span8" name="url">
-					</div>
-				</div>
-				<div class="clearfix">
-					<label for="textInputLink">Description</label>
-					<div class="input">
-						<textarea id="textInputLink" class="span8" name="text" rows="5"></textarea>
-					</div>
-				</div>
-				<div class="clearfix">
-					<label for="tagsInputLink">Tags</label>
-					<div class="input">
-						<input type="text" id="tagsInputLink" class="span8" name="tags" value="bookmark">
-					</div>
-				</div>
-				<label for="privateInputLink">
-					<input type="checkbox" name="private" id="privateInputLink" val="private">
-					keep private
+				<label class='clearfix'>Title
+					<input type="text" class="span8" name="title">
+				</label>
+				<label class='clearfix'>URL
+					<input type="text" class="span8" name="url">
+				</label>
+				<label class='clearfix'>Description
+					<textarea class="span8" name="text" rows="5"></textarea>
+				</label>
+				<label class='clearfix'>Tags
+					<input type="text" class="span8" name="tags" value="bookmark">
 				</label>
 			</fieldset>
 
 
 
 			<fieldset id="quoteForm" class="form-stacked modal-body tab-pane">
-				<input type="hidden" id="titleInputQuote" class="span8" name="title">
-				<input type="hidden" id="urlInputQuote" class="span8" name="url">
-				<div class="clearfix">
-				<label for="quoteInputQuote">Quote</label>
-					<div class="input">
-						<textarea id="quoteInputQuote" class="span8" name="quote" rows="5"></textarea>
-					</div>
-				</div>
-				<div class="clearfix">
-					<label for="textInputQuote">Notes</label>
-					<div class="input">
-						<textarea id="textInputQuote" class="span8" name="text" rows="4"></textarea>
-					</div>
-				</div>
-				<div class="clearfix">
-					<label for="tagsInputQuote">Tags</label>
-					<div class="input">
-						<input type="text" id="tagsInputQuote" class="span8" name="tags" value="bookmark">
-					</div>
-				</div>
-				<label for="privateInputQuote">
-					<input type="checkbox" name="private" id="privateInputQuote" val="private">
-					keep private
+				<input type="hidden" name="title">
+				<input type="hidden" name="url">
+				<label class='clearfix'>Quote
+						<textarea class="span8" name="quote" rows="5"></textarea>
+				</label>
+				<label class='clearfix'>Note
+					<textarea class="span8" name="text" rows="4"></textarea>
+				</label>
+				<label class='clearfix'>Tags
+					<input type="text" class="span8" name="tags" value="bookmark">
 				</label>
 			</fieldset>
 
+
 			<fieldset id="imageForm" class="form-stacked modal-body tab-pane">
-				<input type="hidden" id="titleInputImage" class="span8" name="title">
-				<input type="hidden" id="urlInputImage" class="span8" name="url">
-				<div class="clearfix">
-				<label>Image</label>
-					<div class="input imagePicker span8">
-					</div>
-				</div>
-				<div class="clearfix">
-					<label for="textInputImage">Notes</label>
-					<div class="input">
-						<textarea id="textInputImage" class="span8" name="text" rows="4"></textarea>
-					</div>
-				</div>
-				<div class="clearfix">
-					<label for="tagsInputImage">Tags</label>
-					<div class="input">
-						<input type="text" id="tagsInputImage" class="span8" name="tags" value="bookmark image">
-					</div>
-				</div>
-				<label for="privateInputImage">
-					<input type="checkbox" name="private" id="privateInputImage" val="private">
-					keep private
+				<input type="hidden" name="title">
+				<input type="hidden" name="url">
+				<label class='clearfix'>Image
+					<input type="hidden" name="image">
+					<div class="imagePicker span8"></div>
+				</label>
+				<label class='clearfix'>Notes
+					<textarea class="span8" name="text" rows="4"></textarea>
+				</label>
+				<label class='clearfix'>Tags
+					<input type="text" class="span8" name="tags" value="bookmark image">
 				</label>
 			</fieldset>
 
 
 			<div class="modal-footer">
+				<label class='private'>
+					<input type="checkbox" name="private" val="private">
+					keep private
+				</label>
 				<input type="submit" class="btn primary large" value="Done">
 				<input type="button" class="btn large closeBtn" value="Cancel">
 			</div>
@@ -267,7 +223,7 @@
 
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 	<script type="text/javascript" src="http://twitter.github.com/bootstrap/1.4.0/bootstrap-tabs.js"></script>
-	<script type="text/javascript" src="http://ace-ide.tiddlyspace.com/chrjs"></script>
-	<script type="text/javascript" src="http://bookmarksplugin.tiddlyspace.com/bookmarker.js"></script>
+	<script type="text/javascript" src="http://tiddlyspace.com/bags/tiddlyspace/tiddlers/chrjs"></script>
+	<script type="text/javascript" src="bookmarker.js"></script>
 </body>
 </html>
