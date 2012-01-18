@@ -11,7 +11,7 @@
  * This triggers a callback from details (an event queue like thing) that is
  * listening for the data to arrive.
  */
-window.bookmarker = (function() {
+(function() {
 
 	var details = {
 		queue: [],
@@ -375,6 +375,4 @@ $(function() {
 	});
 
 });
-
-return details.set.bind(details);
 }());
