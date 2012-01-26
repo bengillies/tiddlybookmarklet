@@ -1,0 +1,20 @@
+{
+	"background_page": "background.html",
+	"browser_action": {
+		"default_icon": "icon-128.png"
+	},
+	"name": "Save to TiddlySpace",
+	"description": "Save pages from around the web to your space in TiddlySpace",
+	"homepage_url": "http://tiddlyspace.com",
+	"icons": {
+		"16": "icon-16.png",
+		"48": "icon-48.png",
+		"128": "icon-128.png"
+	},
+	"permissions": [
+		"tabs",
+		"http://*/*",
+		"https://*/*"
+	],
+	"version": "0.1"
+}

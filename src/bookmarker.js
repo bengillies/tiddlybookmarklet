@@ -270,7 +270,11 @@
 	}
 
 	function receiveMessage(event) {
-		details.set('data', JSON.parse(event.data));
+		var data = JSON.parse(event.data);
+		if (data.from !== 'TiddlySpace') {
+			return;
+		}
+		details.set('data', data);
 		details.set('eventSrc', {
 			origin: event.origin,
 			source: event.source

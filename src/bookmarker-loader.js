@@ -5,7 +5,12 @@
  * javascript:(function(a,b)%7Ba=b.createElement('script');a.setAttribute('src','http://sandben.tiddlyspace.com/bookmarklet.js');b.body.appendChild(a);a.addEventListener('load',function()%7BloadBookmarker('http://sandben.tiddlyspace.com/bookmark','sandben');%7D,false);%7D(null,document))
  */
 
-function loadBookmarker(url, space) {
+/*
+ * @url: url of the bookmarklet
+ * @space: space to save back to
+ * @callback: callback to call when the window closes
+ */
+function loadBookmarker(url, space, callback) {
 
 function getText() {
 	var text = '';
@@ -111,6 +116,9 @@ function getText() {
 
 	function closeBookmarker() {
 		document.body.removeChild(container);
+		if (callback) {
+			callback();
+		}
 	}
 
 	stylesheet.innerHTML = style;
@@ -129,7 +137,8 @@ function getText() {
 				url: window.location.href,
 				space: space,
 				text: getText(),
-				images: getImages()
+				images: getImages(),
+				from: 'TiddlySpace'
 			});
 		iframe.contentWindow.postMessage(message, urlBase);
 	}, false);
@@ -144,3 +153,22 @@ function getText() {
 		closeBookmarker();
 	});
 }
+
+(function() {
+	// check if we should run straight away
+	var scripts = document.getElementsByTagName('script');
+	for (var i = 0, l = scripts.length; i < l; i++) {
+		var attribute = scripts[i].getAttribute('data-tiddlyspace-trigger-hack'),
+			args;
+		// if there's a script from tiddlyspace with the right attribute
+		if (attribute) {
+			args = JSON.parse(attribute);
+			// remove the script when the bookmarklet closes
+			args.push(function() {
+				document.body.removeChild(scripts[i]);
+			});
+			loadBookmarker.apply(window, args);
+			return;
+		}
+	}
+}());
