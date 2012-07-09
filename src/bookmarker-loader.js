@@ -133,7 +133,7 @@ function getText() {
 
 	iframe.addEventListener('load', function() {
 		var message = JSON.stringify({
-				title: document.title.replace('|', '-'),
+				title: document.title.replace(/\|/g, '-'),
 				url: window.location.href,
 				space: space,
 				text: getText(),
