@@ -12,6 +12,8 @@
  * listening for the data to arrive.
  */
 (function() {
+	var id; // we use this ID to verify that we only take notice of the correct
+			// messages that we receive from postMessage
 
 	var details = {
 		queue: [],
@@ -110,7 +112,7 @@
 	};
 
 	Tab.prototype.getPrivate = function() {
-		return $('.modal-footer [name="private"]input').attr('checked') ?
+		return $('.form-actions [name="private"]input').attr('checked') ?
 						'_private' : '_public';
 	};
 
@@ -271,9 +273,13 @@
 
 	function receiveMessage(event) {
 		var data = JSON.parse(event.data);
-		if (data.from !== 'TiddlySpace') {
+
+		if (!id) {
+			id = data.id;
+		} else if (data.id !== id) {
 			return;
 		}
+
 		details.set('data', data);
 		details.set('eventSrc', {
 			origin: event.origin,
@@ -296,13 +302,16 @@
 	function closePage(timeout) {
 		window.setTimeout(function() {
 			details.when('eventSrc', function(src) {
-				src.source.postMessage('close', src.origin);
+				src.source.postMessage(JSON.stringify({
+					type: 'close',
+					id: id
+				}), src.origin);
 			});
 		}, timeout || 0);
 	}
 
 	function getCurrentTab() {
-		return $('.tabs .active').data('tab-name');
+		return $('.nav-tabs .active').data('tab-name');
 	}
 
 	function saveBookmark(event) {
@@ -338,16 +347,125 @@
 		return false;
 	}
 
+	function Mover($el) {
+		var moving = false,
+			initPos = {},
+			oldPos = {};
+
+		var src,
+			height;
+
+		var doMove = function(ev) {
+			var diff = { x: ev.pageX - oldPos.x, y: ev.pageY - oldPos.y };
+			$el.animate({
+				top: '+=' + diff.y,
+				left: '+=' + diff.x
+			}, 0);
+			oldPos.x = ev.pageX;
+			oldPos.y = ev.pageY;
+		};
+
+		var _receive = function _receive(message) {
+			var payload = JSON.parse(message.data);
+			if (payload.id !== id) {
+				return;
+			}
+			switch(payload.type) {
+				case 'initMove':
+					$el.css({
+						top: payload.diff.y + 'px',
+						left: payload.diff.x + 'px'
+					}).show();
+					initPos.x = oldPos.x = payload.diff.x + oldPos.x;
+					initPos.y = oldPos.y = payload.diff.y + oldPos.y;
+					break;
+				case 'doneMove':
+					$el.show();
+					window.removeEventListener('message', _receive, false);
+			}
+		};
+
+		var self;
+		self = {
+			start: function(ev) {
+				if (moving) {
+					return self.stop(ev);
+				} else {
+					moving = true;
+				}
+				oldPos.x = ev.pageX;
+				oldPos.y = ev.pageY;
+				$el.hide();
+				window.addEventListener('message', _receive, false);
+				details.when('eventSrc', function(eventSrc) {
+					src = eventSrc;
+					src.source.postMessage(JSON.stringify({
+						type: 'startMove',
+						id: id
+					}), src.origin);
+				});
+				// fix the height so that increasing the iframe height doesn't mess things up
+				height = $el.css('height');
+				$el.css('height', $el.height());
+				// stop the user selecting text awkwardly while trying to move
+				$el.css({
+					'-webkit-user-select': 'none',
+					'-moz-user-select': 'none',
+					'-ms-user-select': 'none',
+					'-o-user-select': 'none',
+					'user-select': 'none'
+				});
+				$(document).bind('mousemove', doMove);
+			},
+			stop: function() {
+				if (!moving) {
+					return;
+				}
+				window.addEventListener('message', _receive, false);
+				moving = false;
+				$el.hide();
+				$el.css({
+					top: 0,
+					left: 0
+				});
+				$el.css('height', height);
+				src.source.postMessage(JSON.stringify({
+					type: 'stopMove',
+					id: id,
+					diff: { x: oldPos.x - initPos.x, y: oldPos.y - initPos.y }
+				}), src.origin);
+				$el.css({
+					'-webkit-user-select': 'auto',
+					'-moz-user-select': 'auto',
+					'-ms-user-select': 'auto',
+					'-o-user-select': 'auto',
+					'user-select': 'auto'
+				});
+				$(document).unbind('mousemove', doMove);
+			}
+		};
+		return self;
+	}
+
 $(function() {
 
-	$('.modal-footer [type="submit"]input').click(saveBookmark);
+	$('.form-actions [type="submit"]input').click(saveBookmark);
 	$('.closeBtn').click(closePage);
+
+	var mover = new Mover($('.modal'));
+	$('.modal-header').mousedown(function(ev) {
+		if (ev.target.nodeName !== 'LI' &&
+				$(ev.target).closest('.nav-tabs li, #help, #help-info').length === 0) {
+			mover.start(ev);
+		}
+	});
+	$(document).mouseup(mover.stop);
 
 	details.when('data', function(data) {
 		// some initialisation: if there are no images, remove the images tab
 		if (data.images.length === 0) {
 			$('#imageForm').remove();
-			$('.tabs li').each(function(i, el) {
+			$('.nav-tabs li').each(function(i, el) {
 				if ($(el).data('tab-name') === 'image') {
 					$(el).remove();
 				}
@@ -357,16 +475,23 @@ $(function() {
 		// figure out which tab we should start off on
 		var tab = pickDefaultTab(data);
 
-		// populate the tab with data when the user switches to it
-		$('.tabs').delegate('li', 'click', function() {
+		// populate the tab with data and switch to it
+		$('.nav-tabs').delegate('li', 'click', function() {
 			var tabName = $(this).data('tab-name');
+			$('.nav-tabs li').removeClass('active');
+			$(this).addClass('active');
+			$('.modal-body').removeClass('active').each(function(i, el) {
+				if (el.id === tabName + 'Form') {
+					$(el).addClass('active');
+				}
+			});
 			if (tabs[tabName].isEmpty()) {
 				tabs[tabName].setTab(data);
 			}
 		});
 
 		// initialise the app by switching to the correct tab.
-		$('.tabs li').each(function(i, el) {
+		$('.nav-tabs li').each(function(i, el) {
 			var $el = $(el);
 			if ($el.data('tab-name') === tab) {
 				$el.find('a').click();
