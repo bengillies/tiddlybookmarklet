@@ -76,7 +76,7 @@ window.Bookmarker = {
 
 		this.bookmarkletID = 'bookmarklet' + this.randID;
 		this.stylesheet.innerHTML = generateStylesheet(this.bookmarkletID);
-		document.head.appendChild(this.stylesheet);
+		document.body.appendChild(this.stylesheet);
 		this.urlBase = url.replace(/^(.*)([^\/])(\/[^\/].*)/,
 			function($0, $1, $2) {
 				return ($1) ? $1 + $2 : '';
@@ -85,34 +85,42 @@ window.Bookmarker = {
 		this.loadDependencies(function() {
 			var mover;
 
-			self.iframe = $('<iframe/>', {
-				src: url,
-				id: self.bookmarkletID
-			}).appendTo(document.body)[0];
+			if (!isExtension) {
+				self.iframe = $('<iframe/>', {
+					src: url,
+					id: self.bookmarkletID
+				}).appendTo(document.body)[0];
 
-			self.iframe.addEventListener('load', function() {
-				var message = self.getMessage(space, { local: isExtension });
-				self.iframe.contentWindow.postMessage(message, self.urlBase);
-			}, false);
+				self.iframe.addEventListener('load', function() {
+					var message = self.getMessage(space);
+					self.iframe.contentWindow.postMessage(message, self.urlBase);
+				}, false);
 
-			mover = Mover($(self.iframe), self.urlBase, self.randID);
-			window.addEventListener('message', function(event) {
-				var message = JSON.parse(event.data);
-				if (event.origin === self.urlBase &&
-						message.id === self.randID) {
-					switch (message.type) {
-						case 'close':
-							self.close();
-							break;
-						case 'startMove':
-							mover.start(message.payload);
-							break;
-						case 'stopMove':
-							mover.stop(message.diff);
-							break;
+				mover = Mover($(self.iframe), self.urlBase, self.randID);
+				window.addEventListener('message', function(event) {
+					var message = JSON.parse(event.data);
+					if (event.origin === self.urlBase &&
+							message.id === self.randID) {
+						switch (message.type) {
+							case 'close':
+								self.close();
+								break;
+							case 'startMove':
+								mover.start(message.payload);
+								break;
+							case 'stopMove':
+								mover.stop(message.diff);
+								break;
+						}
 					}
-				}
-			}, false);
+				}, false);
+			} else {
+				var message = self.getMessage(space, { local: isExtension });
+				chrome.extension.sendMessage({
+					message: 'send details',
+					data: message
+				});
+			}
 		});
 	},
 
@@ -289,8 +297,6 @@ window.loadBookmarker = function() {
 
 // check if we are in a chrome extension and listen for click messages
 if (chrome && chrome.extension && chrome.extension.onMessage) {
-	chrome.extension.onMessage.addListener(function(data) {
-		Bookmarker.load.apply(Bookmarker, data);
-	});
+	Bookmarker.load('foo', 'foo');
 }
 }());

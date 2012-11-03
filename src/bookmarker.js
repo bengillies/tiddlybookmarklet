@@ -106,7 +106,9 @@
 		});
 
 		details.when('data', function(data) {
-			tiddler.bag = new tiddlyweb.Bag(data.space + priv, '/');
+			var host = data.local ? 'http://' + data.space + '.tiddlyspace.com/'
+				: '/';
+			tiddler.bag = new tiddlyweb.Bag(data.space + priv, host);
 			details.set('tiddler', tiddler);
 		});
 	};
