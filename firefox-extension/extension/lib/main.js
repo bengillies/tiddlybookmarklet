@@ -51,8 +51,8 @@ panel.on('show', function() {
 });
 
 panel.port.on('save', function(data) {
-	let url = 'http://tiddlyspace.com/bags/' + data.bag +
-		'/tiddlers/' + data.title;
+	let url = 'http://tiddlyspace.com/bags/' + encodeURIComponent(data.bag) +
+		'/tiddlers/' + encodeURIComponent(data.title);
 
 	Request({
 		url: url,
