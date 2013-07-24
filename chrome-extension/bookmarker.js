@@ -652,7 +652,6 @@ return tw;
 
 	function receiveMessage(event) {
 		var data = JSON.parse(event.data);
-		console.log('no fucking way');
 
 		if (!id) {
 			id = data.id;
