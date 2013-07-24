@@ -40,7 +40,7 @@ panel.on('show', function() {
 					panel.port.emit('bookmark-data', {
 						space: space,
 						url: tabs.activeTab.url,
-						title: tabs.activeTab.title,
+						title: tabs.activeTab.title.replace(/\|/g, ' - '),
 						text: data.text,
 						images: data.images
 					});
