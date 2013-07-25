@@ -5,5 +5,14 @@
   "description": "Save web pages to TiddlySpace",
   "author": "Ben Gillies",
   "license": "MPL 2.0",
-  "version": "0.1"
+  "version": "0.1",
+  "preferences": [
+    {
+      "type": "string",
+      "name": "spaceName",
+      "title": "Space Name",
+      "description": "The space you want to save bookmarks to. Leave blank for your home space",
+      "value": ""
+    }
+  ]
 }

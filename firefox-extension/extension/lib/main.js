@@ -2,6 +2,7 @@ var Widget = require('sdk/widget').Widget,
 	Panel = require('sdk/panel').Panel,
 	Request = require('sdk/request').Request,
 	tabs = require('sdk/tabs'),
+	prefs = require('sdk/simple-prefs').prefs,
 	self = require('sdk/self');
 
 var panel = Panel({
@@ -34,7 +35,7 @@ panel.on('show', function() {
 		headers: { Accept: 'application/json' },
 		onComplete: function(response) {
 			if (response.status == 200) {
-				let space = response.json.username;
+				let space = prefs.spaceName || response.json.username;
 
 				getData(function(data) {
 					panel.port.emit('bookmark-data', {
